@@ -9,6 +9,7 @@ verify_ssl = true
 flask-restful = "*"
 flask-cors = "*"
 python-dotenv = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.6"
