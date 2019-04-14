@@ -10,6 +10,8 @@ flask-restful = "*"
 flask-cors = "*"
 python-dotenv = "*"
 gunicorn = "*"
+requests = "*"
+webargs = "*"
 
 [requires]
 python_version = "3.6"
