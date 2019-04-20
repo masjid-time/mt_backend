@@ -1,3 +1,4 @@
+from datetime import datetime
 from math import radians, cos, sin, asin, sqrt
 
 
@@ -19,6 +20,18 @@ def get_distance(result, lat, lng):
 
 def item_mapper(result, lat, lng):
     return {'id': result['id'],
+            'place_id': result['place_id'],
             'name': result['name'],
             'address': result['vicinity'],
             'distance': get_distance(result, lat, lng)}
+
+
+def day_difference(dt):
+    diff = dt - datetime.now()
+    day_count = diff.days
+    if day_count > 1:
+        return f'Updated {diff.days} days ago'
+    elif day_count == 1:
+        return f'Updated {diff.days} day ago'
+    else:
+        return f'Updated today'

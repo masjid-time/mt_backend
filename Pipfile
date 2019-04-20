@@ -12,6 +12,8 @@ python-dotenv = "*"
 gunicorn = "*"
 requests = "*"
 webargs = "*"
+flask-sqlalchemy = "*"
+flask-migrate = "*"
 
 [requires]
 python_version = "3.6"
