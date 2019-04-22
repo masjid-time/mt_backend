@@ -13,35 +13,58 @@ from mtapp.util import item_mapper, day_difference
 
 
 class Mosques(Resource):
-    location_args = {'lat': fields.Str(missing=''), 'lng': fields.Str(missing=''), 'place': fields.Str(missing='')}
+    location_args = {'lat': fields.Str(missing=''),
+                     'lng': fields.Str(missing=''),
+                     'place': fields.Str(missing=''),
+                     'next_page_token': fields.Str(missing='')}
 
     @use_args(location_args)
     def get(self, args):
-        if args['lat'] and args['lng']:
-            lat, lng = args['lat'], args['lng']
-        elif args['place']:
+        if args['next_page_token']:
+            pagetoken, pos = args['next_page_token'].split('@')
+            lat, lng = pos.split(',')
             payload = {
+                'key': os.environ['MAPS_KEY'],
+                'pagetoken': pagetoken
+            }
+        elif args['lat'] and args['lng']:
+            lat, lng = args['lat'], args['lng']
+            payload = {
+                'key': os.environ['MAPS_KEY'],
+                'location': f'{lat},{lng}',
+                'rankby': 'distance',
+                'type': 'mosque',
+                'keyword': 'masjid'
+            }
+        elif args['place']:
+            findplace_payload = {
                 'key': os.environ['MAPS_KEY'],
                 'input': args['place'],
                 'inputtype': 'textquery',
                 'fields': 'name,geometry,formatted_address'
             }
-            resp = requests.get('https://maps.googleapis.com/maps/api/place/findplacefromtext/json', params=payload)
-            result = resp.json()['candidates'][0]
+            findplace_resp = requests.get('https://maps.googleapis.com/maps/api/place/findplacefromtext/json',
+                                          params=findplace_payload)
+            result = findplace_resp.json()['candidates'][0]
             lat, lng = result['geometry']['location']['lat'], result['geometry']['location']['lng']
+            payload = {
+                'key': os.environ['MAPS_KEY'],
+                'location': f'{lat},{lng}',
+                'rankby': 'distance',
+                'type': 'mosque',
+                'keyword': 'masjid'
+            }
         else:
-            abort(400, errors='Latitude, longitude or Place is not available')
+            abort(400, errors='Bad request')
 
-        payload = {
-            'key': os.environ['MAPS_KEY'],
-            'location': f'{lat},{lng}',
-            'rankby': 'distance',
-            'type': 'mosque',
-            'keyword': 'masjid'
-        }
         resp = requests.get('https://maps.googleapis.com/maps/api/place/nearbysearch/json', params=payload)
+        if resp.json().get('next_page_token') is None:
+            mosque_list = {'next_page_token': ''}
+        else:
+            mosque_list = {'next_page_token': f"{resp.json().get('next_page_token')}@{lat},{lng}"}
         results = resp.json()['results']
-        mosque_list = {'results': [item_mapper(result, lat, lng) for result in results]}
+        mosque_list.update({'results': [item_mapper(result, lat, lng) for result in results]})
+
         return jsonify(mosque_list)
 
 
