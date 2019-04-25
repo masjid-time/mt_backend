@@ -14,6 +14,7 @@ requests = "*"
 webargs = "*"
 flask-sqlalchemy = "*"
 flask-migrate = "*"
+psycopg2 = "*"
 
 [requires]
 python_version = "3.6"
