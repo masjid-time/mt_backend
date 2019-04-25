@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 
 import requests
-from flask import jsonify
+from flask import jsonify, request
 from flask_restful import Resource, abort
 from webargs import fields
 from webargs.flaskparser import use_args, parser
@@ -71,12 +71,7 @@ class Mosques(Resource):
 class MosqueDetail(Resource):
     mosque_args = {'id': fields.Str(),
                    'place_id': fields.Str(),
-                   'distance': fields.Str(),
-                   'fazr': fields.Str(missing=''),
-                   'zohr': fields.Str(missing=''),
-                   'asr': fields.Str(missing=''),
-                   'maghrib': fields.Str(missing=''),
-                   'isha': fields.Str(missing=''),
+                   'distance': fields.Str()
                    }
 
     @use_args(mosque_args)
@@ -93,7 +88,8 @@ class MosqueDetail(Resource):
             }
             resp = requests.get('https://maps.googleapis.com/maps/api/place/details/json', params=payload)
             result = resp.json()['result']
-            mosque_detail = {'name': result['name'],
+            mosque_detail = {'id': id,
+                             'name': result['name'],
                              'address': result['formatted_address'],
                              'url': result['url'],
                              'plus_code': result['plus_code'],
@@ -113,26 +109,49 @@ class MosqueDetail(Resource):
 
         return jsonify(mosque_detail)
 
-    @use_args(mosque_args)
-    def post(self, args):
+    def post(self):
+        args = request.get_json()
         try:
             id = args.pop('id')
         except KeyError:
             abort(400, errors='Missing required parameters')
         else:
             time_data = {k: datetime.strptime(v, '%H:%M') for k, v in args.items()}
-            data_to_save = Timings(id=id, time_fazr=time_data['fazr'],
-                                   time_zohr=time_data['zohr'],
-                                   time_asr=time_data['asr'],
-                                   time_maghrib=time_data['maghrib'],
-                                   time_isha=time_data['isha'],
+            data_to_save = Timings(id=id, time_fazr=time_data['FAZR'],
+                                   time_zohr=time_data['ZOHR'],
+                                   time_asr=time_data['ASR'],
+                                   time_maghrib=time_data['MAGHRIB'],
+                                   time_isha=time_data['ISHA'],
                                    last_updated=datetime.now())
 
         try:
             db.session.add(data_to_save)
             db.session.commit()
-        except:
-            abort(500, errors='Unable to save data')
+        except Exception as e:
+            abort(500, errors=f'Unable to save data due to error {e}')
+        return jsonify({'message': 'Data saved successfully'})
+
+    def put(self):
+        args = request.get_json()
+        try:
+            id = args.pop('id')
+        except KeyError:
+            abort(400, errors='Missing required parameters')
+        else:
+            time_details = Timings.query.get(id)
+            time_data = {k: datetime.strptime(v, '%H:%M') for k, v in args.items()}
+            time_details.time_fazr = time_data['FAZR']
+            time_details.time_zohr = time_data['ZOHR']
+            time_details.time_asr = time_data['ASR']
+            time_details.time_maghrib = time_data['MAGHRIB']
+            time_details.time_isha = time_data['ISHA']
+            time_details.last_updated = datetime.now()
+
+        try:
+            db.session.commit()
+        except Exception as e:
+            abort(500, errors=f'Unable to save data due to error {e}')
+
         return jsonify({'message': 'Data saved successfully'})
 
 

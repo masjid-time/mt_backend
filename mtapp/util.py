@@ -1,4 +1,5 @@
 from datetime import datetime
+
 from math import radians, cos, sin, asin, sqrt
 
 
@@ -27,7 +28,7 @@ def item_mapper(result, lat, lng):
 
 
 def day_difference(dt):
-    diff = dt - datetime.now()
+    diff = datetime.now() - dt
     day_count = diff.days
     if day_count > 1:
         return f'Updated {diff.days} days ago'
