@@ -45,15 +45,19 @@ class Mosques(Resource):
             }
             findplace_resp = requests.get('https://maps.googleapis.com/maps/api/place/findplacefromtext/json',
                                           params=findplace_payload)
-            result = findplace_resp.json()['candidates'][0]
-            lat, lng = result['geometry']['location']['lat'], result['geometry']['location']['lng']
-            payload = {
-                'key': os.environ['MAPS_KEY'],
-                'location': f'{lat},{lng}',
-                'rankby': 'distance',
-                'type': 'mosque',
-                'keyword': 'masjid'
-            }
+            try:
+                result = findplace_resp.json()['candidates'][0]
+            except IndexError:
+                return jsonify({'results': ''})
+            else:
+                lat, lng = result['geometry']['location']['lat'], result['geometry']['location']['lng']
+                payload = {
+                    'key': os.environ['MAPS_KEY'],
+                    'location': f'{lat},{lng}',
+                    'rankby': 'distance',
+                    'type': 'mosque',
+                    'keyword': 'masjid'
+                }
         else:
             abort(400, errors='Bad request')
 

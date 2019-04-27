@@ -31,8 +31,8 @@ def day_difference(dt):
     diff = datetime.now() - dt
     day_count = diff.days
     if day_count > 1:
-        return f'Updated {diff.days} days ago'
+        return f'Last updated {diff.days} days ago'
     elif day_count == 1:
-        return f'Updated {diff.days} day ago'
+        return f'Last updated {diff.days} day ago'
     else:
-        return f'Updated today'
+        return f'Last updated today'
