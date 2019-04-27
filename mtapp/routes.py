@@ -103,11 +103,11 @@ class MosqueDetail(Resource):
         if time_details is None:
             time = {'time': {}, 'last_updated': ''}
         else:
-            time = {'time': {'FAZR': time_details.time_fazr.strftime('%H:%M'),
-                             'ZOHR': time_details.time_zohr.strftime('%H:%M'),
-                             'ASR': time_details.time_asr.strftime('%H:%M'),
-                             'MAGHRIB': time_details.time_maghrib.strftime('%H:%M'),
-                             'ISHA': time_details.time_isha.strftime('%H:%M')},
+            time = {'time': {'FAJR': time_details.fajr.strftime('%H:%M'),
+                             'DHUHR': time_details.dhuhr.strftime('%H:%M'),
+                             'ASR': time_details.asr.strftime('%H:%M'),
+                             'MAGHRIB': time_details.maghrib.strftime('%H:%M'),
+                             'ISHA': time_details.isha.strftime('%H:%M')},
                     'last_updated': day_difference(time_details.last_updated)}
         mosque_detail.update(time)
 
@@ -121,8 +121,8 @@ class MosqueDetail(Resource):
             abort(400, errors='Missing required parameters')
         else:
             time_data = {k: datetime.strptime(v, '%H:%M') for k, v in args.items()}
-            data_to_save = Timings(id=id, time_fazr=time_data['FAZR'],
-                                   time_zohr=time_data['ZOHR'],
+            data_to_save = Timings(id=id, time_fazr=time_data['FAJR'],
+                                   time_zohr=time_data['DHUHR'],
                                    time_asr=time_data['ASR'],
                                    time_maghrib=time_data['MAGHRIB'],
                                    time_isha=time_data['ISHA'],
@@ -144,11 +144,11 @@ class MosqueDetail(Resource):
         else:
             time_details = Timings.query.get(id)
             time_data = {k: datetime.strptime(v, '%H:%M') for k, v in args.items()}
-            time_details.time_fazr = time_data['FAZR']
-            time_details.time_zohr = time_data['ZOHR']
-            time_details.time_asr = time_data['ASR']
-            time_details.time_maghrib = time_data['MAGHRIB']
-            time_details.time_isha = time_data['ISHA']
+            time_details.fajr = time_data['FAJR']
+            time_details.dhuhr = time_data['DHUHR']
+            time_details.asr = time_data['ASR']
+            time_details.maghrib = time_data['MAGHRIB']
+            time_details.isha = time_data['ISHA']
             time_details.last_updated = datetime.now()
 
         try:
