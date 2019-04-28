@@ -121,11 +121,12 @@ class MosqueDetail(Resource):
             abort(400, errors='Missing required parameters')
         else:
             time_data = {k: datetime.strptime(v, '%H:%M') for k, v in args.items()}
-            data_to_save = Timings(id=id, time_fazr=time_data['FAJR'],
-                                   time_zohr=time_data['DHUHR'],
-                                   time_asr=time_data['ASR'],
-                                   time_maghrib=time_data['MAGHRIB'],
-                                   time_isha=time_data['ISHA'],
+            data_to_save = Timings(id=id,
+                                   fajr=time_data['FAJR'],
+                                   dhuhr=time_data['DHUHR'],
+                                   asr=time_data['ASR'],
+                                   maghrib=time_data['MAGHRIB'],
+                                   isha=time_data['ISHA'],
                                    last_updated=datetime.now())
 
         try:
