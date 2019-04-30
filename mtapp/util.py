@@ -15,8 +15,9 @@ def get_distance(result, lat, lng):
     dlng = lng2 - lng1
     a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlng / 2) ** 2
     c = 2 * asin(sqrt(a))
-    distance = f'{(c * R):.0f}'
-    return f'{distance} m'
+    # m_distance = f'{(c * R):.0f}'
+    km_distance = f'{((c * R) / 1000):.2f}'
+    return f'{km_distance} km'
 
 
 def item_mapper(result, lat, lng):
