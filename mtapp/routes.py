@@ -107,7 +107,8 @@ class MosqueDetail(Resource):
                              'DHUHR': time_details.dhuhr.strftime('%H:%M'),
                              'ASR': time_details.asr.strftime('%H:%M'),
                              'MAGHRIB': time_details.maghrib.strftime('%H:%M'),
-                             'ISHA': time_details.isha.strftime('%H:%M')},
+                             'ISHA': time_details.isha.strftime('%H:%M'),
+                             'JUMA': time_details.juma.strftime('%H:%M')},
                     'last_updated': day_difference(time_details.last_updated)}
         mosque_detail.update(time)
 
@@ -127,6 +128,7 @@ class MosqueDetail(Resource):
                                    asr=time_data['ASR'],
                                    maghrib=time_data['MAGHRIB'],
                                    isha=time_data['ISHA'],
+                                   juma=time_data['JUMA'],
                                    last_updated=datetime.now())
 
         try:
@@ -150,6 +152,7 @@ class MosqueDetail(Resource):
             time_details.asr = time_data['ASR']
             time_details.maghrib = time_data['MAGHRIB']
             time_details.isha = time_data['ISHA']
+            time_details.juma = time_data['JUMA']
             time_details.last_updated = datetime.now()
 
         try:

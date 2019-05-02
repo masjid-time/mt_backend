@@ -8,6 +8,7 @@ class Timings(db.Model):
     asr = db.Column(db.DateTime)
     maghrib = db.Column(db.DateTime)
     isha = db.Column(db.DateTime)
+    juma = db.Column(db.DateTime)
     last_updated = db.Column(db.DateTime)
 
     def __repr__(self):
