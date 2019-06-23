@@ -21,6 +21,12 @@ def get_distance(result, lat, lng):
 
 
 def item_mapper(result, lat, lng):
+    if result.get('id') is None:
+        return {'id': result['place_id'],
+                'place_id': result['place_id'],
+                'name': result['name'],
+                'address': result['vicinity'],
+                'distance': get_distance(result, lat, lng)}
     return {'id': result['id'],
             'place_id': result['place_id'],
             'name': result['name'],
