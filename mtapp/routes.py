@@ -45,6 +45,7 @@ class Mosques(Resource):
             }
             findplace_resp = requests.get('https://maps.googleapis.com/maps/api/place/findplacefromtext/json',
                                           params=findplace_payload)
+            print('find place resp\n', findplace_resp.text)
             try:
                 result = findplace_resp.json()['candidates'][0]
             except IndexError:
@@ -62,6 +63,7 @@ class Mosques(Resource):
             abort(400, errors='Bad request')
 
         resp = requests.get('https://maps.googleapis.com/maps/api/place/nearbysearch/json', params=payload)
+        print('result resp\n', resp.text)
         if resp.json().get('next_page_token') is None:
             mosque_list = {'next_page_token': ''}
         else:
